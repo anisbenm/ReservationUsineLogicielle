@@ -1,0 +1,43 @@
+<project>
+	<property name="wardir"   value="${basedir}\target" />
+	<property name="warfile"  value="${wardir}\M2IISpringReservation-1.0-SNAPSHOT.war" />
+	<property name="server"   value="C:\Program Files\Apache Software Foundation\Tomcat 8.5\webapps\" />
+	<property name="sfile"     value="reservation.war" />
+	<!-- Le 2 proprietés sont a modifier pour chaque cas d'utilisation-->
+	<property name="diff1"    value="${basedir}/src/fitec/dba/metier" />
+	<property name="diff2"    value="${user.home}/workEE\FitecSpring\src\fitec\dba\metier" />
+    
+		<target name="delivery">
+    	<echo message="Delivery version (${ant.java.version}) ${warfile}"/>
+    	<echo message="Copy WAR File ${warfile} to ${server}/${sfile} "/>
+    	<copy file="${warfile}" tofile="${server}/${sfile}"/>
+    </target>
+	
+	<target name="difference">
+		<!--Target do a difference between 2 directories -> make a list of files differrents -->
+	    <echo message="Do a Directory Diff Ant Task (${ant.java.version})"/>
+		<echo message="Diff between ${diff1} and ${diff2}"/>
+		<echo message="PASS I  : Differents files between both directory "/>
+		<fileset dir="${diff1}" id="differents">
+		     <different targetdir="${diff2}"
+		         ignoreFileTimes="true"/>
+		</fileset>
+		<echo>  --> Different :${toString:differents}</echo> 
+		<echo message="PASS I  : END "/>
+		<echo message="PASS II : Not presents files between both directory "/>
+			<fileset dir="${diff1}" id="nopresent1" excludes="**/*.class">
+				<not>
+					<present present="both" targetdir="${diff2}"/>
+				</not>
+			</fileset>
+			<fileset dir="${diff2}" id="nopresent2" excludes="**/*.class">
+				<not>
+					<present present="both" targetdir="${diff1}"/>
+				</not>
+			</fileset>	
+		<echo message="Not presents in ${diff1}: ${toString:nopresent1}" />
+		<echo message="Not presents in ${diff2}: ${toString:nopresent2}" />
+		<echo message="PASS II : END "/>
+	</target>
+	 
+</project>
